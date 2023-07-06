@@ -16,6 +16,8 @@ public class ResponseUserDTO {
 
     private int id;
     private String username;
+    private String firstName;
+    private String lastName;
     private String email;
     private int age;
     private String address;
@@ -24,6 +26,8 @@ public class ResponseUserDTO {
 
     public ResponseUserDTO(User user) {
         id = user.getId();
+        firstName = user.getFirstName();
+        lastName = user.getLastName();
         username = user.getUsername();
         email = user.getEmail();
         age = user.getAge();

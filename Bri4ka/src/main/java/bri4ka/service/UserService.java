@@ -10,6 +10,7 @@ import bri4ka.model.pojo.Car;
 import bri4ka.model.pojo.User;
 import bri4ka.repository.CarRepository;
 import bri4ka.repository.UserRepository;
+import bri4ka.utilities.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,17 +34,8 @@ public class UserService {
     }
 
     public ResponseUserDTO addUser(RegisterRequestUserDTO userDTO){
-        userRepository.findByEmail(userDTO.getEmail())
-                .ifPresent(u -> {
-                    throw new NotAcceptableException("Account with this email already exists.");
-                });
-        userRepository.findByUsername(userDTO.getUsername())
-                .ifPresent(u -> {
-                    throw new NotAcceptableException("Account with this username already exists.");
-                });
-
-        userDTO.setPassword(passwordEncoder
-                .encode(userDTO.getPassword()));
+        validateUserDetails(userDTO);
+        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         User user = new User(userDTO);
         user = userRepository.save(user);
 
@@ -72,11 +64,12 @@ public class UserService {
     }
 
     public ResponseUserDTO login(LoginUserDTO dto) {
+        String errorMessage = "The username or password is incorrect.";
         User user = userRepository.findByUsername(dto.getUsername())
-                .orElseThrow(() -> new InvalidCredentialsException("The username or password is incorrect."));
+                .orElseThrow(() -> new InvalidCredentialsException(errorMessage));
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new InvalidCredentialsException("The username or password is incorrect.");
+            throw new InvalidCredentialsException(errorMessage);
         }
         return new ResponseUserDTO(user);
     }
@@ -93,4 +86,25 @@ public class UserService {
         carRepository.save(car);
         return new ResponseUserDTO(userRepository.findById(userId).get());
     }
+
+    private void validateUserDetails(RegisterRequestUserDTO userDTO){
+        Validator.validateAge(userDTO.getAge());
+        Validator.validateNames(userDTO.getFirstName(), userDTO.getLastName());
+        Validator.validateEmail(userDTO.getEmail());
+        Validator.validateUsername(userDTO.getUsername());
+        if(!userDTO.getPassword().equals(userDTO.getConfirmPassword())){
+            throw new NotAcceptableException("Passwords do not match.");
+        }
+        Validator.validatePassword(userDTO.getPassword());
+        //database-related validations
+        userRepository.findByEmail(userDTO.getEmail())
+                .ifPresent(u -> {
+                    throw new NotAcceptableException("Account with this email already exists.");
+                });
+        userRepository.findByUsername(userDTO.getUsername())
+                .ifPresent(u -> {
+                    throw new NotAcceptableException("Account with this username already exists.");
+                });
+    }
+
 }

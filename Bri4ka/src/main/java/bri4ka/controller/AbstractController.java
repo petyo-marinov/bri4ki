@@ -49,6 +49,6 @@ public class AbstractController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDTO handleException(BadRequestException e){
         log.error(e.getMessage());
-        return new ErrorDTO("Sorry, " + e.getMessage());
+        return new ErrorDTO("Sorry! " + e.getMessage());
     }
 }
