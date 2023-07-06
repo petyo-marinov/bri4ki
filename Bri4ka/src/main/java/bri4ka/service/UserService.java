@@ -6,8 +6,10 @@ import bri4ka.exceptions.NotFoundException;
 import bri4ka.model.dto.user.LoginUserDTO;
 import bri4ka.model.dto.user.RegisterRequestUserDTO;
 import bri4ka.model.dto.user.ResponseUserDTO;
+import bri4ka.model.pojo.Car;
 import bri4ka.model.pojo.User;
-import bri4ka.model.repository.UserRepository;
+import bri4ka.repository.CarRepository;
+import bri4ka.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,22 +22,24 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CarRepository carRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, CarRepository carRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.carRepository = carRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     public ResponseUserDTO addUser(RegisterRequestUserDTO userDTO){
         userRepository.findByEmail(userDTO.getEmail())
                 .ifPresent(u -> {
-                    throw new NotAcceptableException("account with this email already exists.");
+                    throw new NotAcceptableException("Account with this email already exists.");
                 });
         userRepository.findByUsername(userDTO.getUsername())
                 .ifPresent(u -> {
-                    throw new NotAcceptableException("account with this username already exists.");
+                    throw new NotAcceptableException("Account with this username already exists.");
                 });
 
         userDTO.setPassword(passwordEncoder
@@ -52,13 +56,19 @@ public class UserService {
         return new ResponseUserDTO(user);
     }
 
+    public ResponseUserDTO findByUsername(String username){
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User not found."));
+        return new ResponseUserDTO(user);
+    }
+
     public List<ResponseUserDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
-        List<ResponseUserDTO> returnUsers = new ArrayList<>();
+        List<ResponseUserDTO> listOfUsers = new ArrayList<>();
         for(User u : users){
-            returnUsers.add(new ResponseUserDTO(u));
+            listOfUsers.add(new ResponseUserDTO(u));
         }
-        return returnUsers;
+        return listOfUsers;
     }
 
     public ResponseUserDTO login(LoginUserDTO dto) {
@@ -71,4 +81,16 @@ public class UserService {
         return new ResponseUserDTO(user);
     }
 
+    public ResponseUserDTO buyCar(int userId, int carId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+        Car car = carRepository.findById(carId)
+                .orElseThrow(() -> new NotFoundException("Car not found"));
+        if(car.getOwner() != null){
+            throw new NotAcceptableException("Car already bought");
+        }
+        car.setOwner(user);
+        carRepository.save(car);
+        return new ResponseUserDTO(userRepository.findById(userId).get());
+    }
 }

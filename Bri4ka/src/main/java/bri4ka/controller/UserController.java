@@ -1,22 +1,25 @@
 package bri4ka.controller;
 
+import bri4ka.exceptions.BadRequestException;
 import bri4ka.model.dto.user.LoginUserDTO;
 import bri4ka.model.dto.user.RegisterRequestUserDTO;
 import bri4ka.model.dto.user.ResponseUserDTO;
 import bri4ka.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 public class UserController extends AbstractController{
 
     private final UserService userService;
+    private final SessionManager sessionManager;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, SessionManager sessionManager) {
         this.userService = userService;
+        this.sessionManager = sessionManager;
     }
 
     @PutMapping("/users")
@@ -25,10 +28,29 @@ public class UserController extends AbstractController{
     }
 
     @PostMapping("/users")
-    public ResponseUserDTO login(@RequestBody LoginUserDTO dto){
+    public ResponseUserDTO login(@RequestBody LoginUserDTO dto, HttpSession session){
+        String username = dto.getUsername();
+        if(sessionManager.isUserLoggedIn(session)){
+            throw new BadRequestException("Already logged in.");
+        }
         ResponseUserDTO responseUserDTO = userService.login(dto);
-        //sava to session
+        sessionManager.userLogsIn(session, userService.findByUsername(username).getId());
+        //session.setAttribute("LoggedUser", responseUserDTO.getId());
         return responseUserDTO;
+    }
+
+    @PostMapping("/logout")
+    public void logout(HttpSession session){
+        sessionManager.userLogsOut(session);
+    }
+
+    @PutMapping("/users/{user_id}/cars/{car_id}")
+    public ResponseUserDTO buyCar(@PathVariable(name = "user_id") int userId,
+                                  @PathVariable(name = "car_id") int carId,
+                                  HttpSession session){
+        sessionManager.authorizeLogin(session, userId, "you cannot purchase a car on behalf of another user.");
+
+        return userService.buyCar(userId, carId);
     }
 
     @GetMapping("/users/{id}")

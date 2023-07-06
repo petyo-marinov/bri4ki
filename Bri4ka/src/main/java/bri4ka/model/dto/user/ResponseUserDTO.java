@@ -20,6 +20,7 @@ public class ResponseUserDTO {
     private int age;
     private String address;
     private List<CarWithoutOwnerDTO> cars;
+    private List<CarWithoutOwnerDTO> likedCars;
 
     public ResponseUserDTO(User user) {
         id = user.getId();
@@ -29,6 +30,11 @@ public class ResponseUserDTO {
         address = user.getAddress();
         cars = user.getCars() != null
                 ? user.getCars().stream()
+                .map(CarWithoutOwnerDTO::new)
+                .toList()
+                : new ArrayList<>();
+        likedCars = user.getLikedCars() != null
+                ? user.getLikedCars().stream()
                 .map(CarWithoutOwnerDTO::new)
                 .toList()
                 : new ArrayList<>();

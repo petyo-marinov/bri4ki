@@ -1,6 +1,7 @@
 package bri4ka.model.pojo;
 
 import bri4ka.model.dto.user.RegisterRequestUserDTO;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,14 @@ public class User {
     private String address;
     @OneToMany(mappedBy = "owner")
     private List<Car> cars;
+    @ManyToMany
+    @JoinTable(
+            name = "users_like_cars",
+            joinColumns = { @JoinColumn(name = "user_id")},
+            inverseJoinColumns = { @JoinColumn(name = "car_id")}
+    )
+    @JsonManagedReference
+    private List<Car> likedCars;
 
     public User(RegisterRequestUserDTO userDTO){
         username = userDTO.getUsername();

@@ -10,5 +10,4 @@ public class Bri4kaApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(Bri4kaApplication.class, args);
 	}
-
 }

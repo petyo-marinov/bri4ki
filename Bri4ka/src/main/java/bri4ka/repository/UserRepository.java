@@ -1,4 +1,4 @@
-package bri4ka.model.repository;
+package bri4ka.repository;
 
 import bri4ka.model.pojo.User;
 import org.springframework.data.jpa.repository.JpaRepository;
