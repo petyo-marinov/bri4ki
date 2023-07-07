@@ -1,7 +1,7 @@
 # bri4ki
 Web-based Java application with the purpose of entertainment for users.
 
-Technologies and API`s:
+**Technologies and API`s:**
 Java 15
 Spring Boot
 Spring Boot Validation
@@ -14,13 +14,13 @@ BCrypt
 MySQl
 Maven
 
-Software:
+**Software:**
 IntelliJ IDEA
 GiT
 Postman
 SQL Workbench
 
-Design patterns:
+**Design patterns:**
 Singleton
 DAO (Data Access Object)
 DTO (Data Transfer Object)
