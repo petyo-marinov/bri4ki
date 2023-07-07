@@ -3,6 +3,7 @@ package bri4ka.service;
 import bri4ka.exceptions.InvalidCredentialsException;
 import bri4ka.exceptions.NotAcceptableException;
 import bri4ka.exceptions.NotFoundException;
+import bri4ka.model.dto.user.EditUserDTO;
 import bri4ka.model.dto.user.LoginUserDTO;
 import bri4ka.model.dto.user.RegisterRequestUserDTO;
 import bri4ka.model.dto.user.ResponseUserDTO;
@@ -67,7 +68,6 @@ public class UserService {
         String errorMessage = "The username or password is incorrect.";
         User user = userRepository.findByUsername(dto.getUsername())
                 .orElseThrow(() -> new InvalidCredentialsException(errorMessage));
-
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException(errorMessage);
         }
@@ -76,15 +76,20 @@ public class UserService {
 
     public ResponseUserDTO buyCar(int userId, int carId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found."));
         Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new NotFoundException("Car not found"));
-        if(car.getOwner() != null){
-            throw new NotAcceptableException("Car already bought");
+                .orElseThrow(() -> new NotFoundException("Car not found."));
+        for (Car c : user.getCars()){
+            if(c.getOwner().getId() == car.getOwner().getId()){
+                throw new NotAcceptableException("Car already bought from you.");
+            }
         }
         car.setOwner(user);
         carRepository.save(car);
-        return new ResponseUserDTO(userRepository.findById(userId).get());
+        user.add(car);
+        userRepository.save(user);
+
+        return new ResponseUserDTO(user);
     }
 
     private void validateUserDetails(RegisterRequestUserDTO userDTO){
@@ -107,4 +112,39 @@ public class UserService {
                 });
     }
 
+    public ResponseUserDTO editUser(int id, EditUserDTO dto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+        if(dto.getFirstName() != null && !dto.getFirstName().equals(user.getFirstName())){
+            Validator.validateNames(dto.getFirstName(), user.getLastName());
+            user.setFirstName(dto.getFirstName());
+        }
+        if(dto.getLastName() != null && !dto.getLastName().equals(user.getLastName())){
+            Validator.validateNames(user.getFirstName(), dto.getLastName());
+            user.setLastName(dto.getLastName());
+        }
+        if(dto.getUsername() != null && !dto.getUsername().equals(user.getUsername())){
+            Validator.validateUsername(dto.getUsername());
+            userRepository.findByUsername(dto.getUsername()).ifPresent(u -> {
+                throw new NotAcceptableException("Account with this username already exists.");
+            });
+            user.setUsername(dto.getUsername());
+        }
+        if(dto.getEmail() != null && !dto.getEmail().equals(user.getEmail())){
+            Validator.validateEmail(dto.getEmail());
+            userRepository.findByEmail(dto.getEmail()).ifPresent(u -> {
+                throw new NotAcceptableException("Account with this email already exists.");
+            });
+            user.setEmail(dto.getEmail());
+        }
+        if(dto.getPassword() != null && !passwordEncoder.matches(dto.getPassword(), user.getPassword())){
+            Validator.validatePassword(dto.getPassword());
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+        if(dto.getAddress() != null && !dto.getAddress().equals(user.getAddress())){
+            user.setAddress(dto.getAddress());
+        }
+        userRepository.save(user);
+        return new ResponseUserDTO(user);
+    }
 }

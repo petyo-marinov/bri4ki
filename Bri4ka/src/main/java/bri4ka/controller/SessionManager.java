@@ -45,5 +45,8 @@ public class SessionManager {
     }
 
 
+    public Object getAttribute(HttpSession session) {
+        return session.getAttribute(LOGGED_IN);
+    }
 }
 

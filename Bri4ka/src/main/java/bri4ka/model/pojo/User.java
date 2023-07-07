@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -54,4 +55,11 @@ public class User {
         address = userDTO.getAddress();
     }
 
+    public void add(Car car) {
+        if (cars == null) {
+            cars = new ArrayList<>();
+        }
+        cars.add(car);
+
+    }
 }

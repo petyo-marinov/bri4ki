@@ -1,6 +1,7 @@
 package bri4ka.controller;
 
 import bri4ka.exceptions.BadRequestException;
+import bri4ka.model.dto.user.EditUserDTO;
 import bri4ka.model.dto.user.LoginUserDTO;
 import bri4ka.model.dto.user.RegisterRequestUserDTO;
 import bri4ka.model.dto.user.ResponseUserDTO;
@@ -35,7 +36,6 @@ public class UserController extends AbstractController{
         }
         ResponseUserDTO responseUserDTO = userService.login(dto);
         sessionManager.userLogsIn(session, userService.findByUsername(username).getId());
-        //session.setAttribute("LoggedUser", responseUserDTO.getId());
         return responseUserDTO;
     }
 
@@ -61,6 +61,12 @@ public class UserController extends AbstractController{
     @GetMapping("/users")
     public List<ResponseUserDTO> getAll (){
         return userService.getAllUsers();
+    }
+
+    @PostMapping("/users/edit")
+    public ResponseUserDTO edit(@RequestBody EditUserDTO dto, HttpSession session){
+        int id = sessionManager.authorizeLogin(session);
+        return userService.editUser(id, dto);
     }
 
 }
