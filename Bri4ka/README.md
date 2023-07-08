@@ -3,10 +3,9 @@ bri4ka.com
 Usage
 This is a web-based Java application that offers entertainment to users through the following features:
 
-**Registration:** Users can register an account by sending a `POST` request to `http://localhost:8888/users` with the required information:
+**Registration:** Users can register an account by sending a `PUT` request to `http://localhost:8888/users` with the required information:
 POST localhost:8888/users
 Content-Type: application/json
-
 {
     "first_name" : "John",
     "last_name" : "Doe",
@@ -19,6 +18,14 @@ Content-Type: application/json
 }
 
 **Profile Browsing:** Users can browse profiles of other registered users by sending a `GET` request to `http://localhost:8888/users/20`.
+
+**Login:** Users can log in to their account by sending a `POST` request to `http://localhost:8888/login` with their username and password:
+POST http://localhost:8888/login
+Content-Type: application/json
+{
+"username" : "john.doe",
+"password" : "John_Doe911"
+}
 
 **Car Browsing:** Users can browse cars by sending a `GET` request to `http://localhost:8888/cars/6`.
 
