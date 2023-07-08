@@ -94,6 +94,7 @@ public class UserService {
 
     private void validateUserDetails(RegisterRequestUserDTO userDTO){
         Validator.validateAge(userDTO.getAge());
+        Validator.validateAddress(userDTO.getAddress());
         Validator.validateNames(userDTO.getFirstName(), userDTO.getLastName());
         Validator.validateEmail(userDTO.getEmail());
         Validator.validateUsername(userDTO.getUsername());

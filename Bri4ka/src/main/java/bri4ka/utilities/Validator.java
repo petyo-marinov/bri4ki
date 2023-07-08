@@ -70,4 +70,13 @@ public class Validator {
             throw new BadRequestException("Invalid age.");
         }
     }
+
+    public static void validateAddress(String address) {
+        String lettersBulg = "[А-Я][a-я]+";
+        String lettersEng = "[A-Z][a-z]+";
+        if(!address.matches(lettersBulg) && !address.matches(lettersEng)){
+            throw new BadRequestException("Address must start with a capital letter and contain only " +
+                    "letters from the same alphabet.");
+        }
+    }
 }
