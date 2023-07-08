@@ -40,3 +40,28 @@ Content-Type: application/json
 To interact with the application, you can use Postman to send HTTP requests and receive responses. Make sure to set the appropriate request method (`GET`, `POST`, etc.) and provide the necessary request parameters and headers.
 
 Feel free to explore the different endpoints and functionalities of the application using Postman.
+
+Technologies
+Java 11
+Spring Boot
+Spring Boot Validation
+Spring Boot Starter Email
+Spring Rest
+Hibernate
+JPA
+Lombok
+BCrypt
+MySQL
+Maven
+
+Tools
+IntelliJ IDEA
+Git
+Postman
+SQL Workbench
+
+Design Patterns
+Singleton
+DAO (Data Access Object)
+DTO (Data Transfer Object)
+POJO (Plain Old Java Object)
