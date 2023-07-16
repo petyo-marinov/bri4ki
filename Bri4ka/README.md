@@ -12,7 +12,7 @@ Content-Type: application/json
     "username" : "John.Doe",
     "email" : "john.doe@gmail.com",
     "password" : "John_Doe911",
-    "confirm_password" : "Ivan4o_Ivanov",
+    "confirm_password" : "John_Doe911",
     "age" : 66,
     "address" : "Nowhere"
 }
