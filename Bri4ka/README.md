@@ -65,3 +65,5 @@ Singleton
 DAO (Data Access Object)
 DTO (Data Transfer Object)
 POJO (Plain Old Java Object)
+
+![DBDiagram](https://github.com/petyo-marinov/bri4ki/assets/135258011/fb11e09b-15ff-4d07-8bc8-bc141479e8e2)
