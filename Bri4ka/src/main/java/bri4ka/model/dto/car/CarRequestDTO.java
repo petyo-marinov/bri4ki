@@ -1,6 +1,7 @@
 package bri4ka.model.dto.car;
 
 import bri4ka.model.pojo.CarImage;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class CarRequestDTO {
 
     private String manufacturer;
