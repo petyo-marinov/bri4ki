@@ -7,21 +7,17 @@ import bri4ka.model.dto.user.RegisterRequestUserDTO;
 import bri4ka.model.dto.user.ResponseUserDTO;
 import bri4ka.service.UserService;
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 public class UserController extends AbstractController{
 
     private final UserService userService;
     private final SessionManager sessionManager;
-
-    @Autowired
-    public UserController(UserService userService, SessionManager sessionManager) {
-        this.userService = userService;
-        this.sessionManager = sessionManager;
-    }
 
     @PutMapping("/users")
     public ResponseUserDTO register(@RequestBody RegisterRequestUserDTO userDTO){
